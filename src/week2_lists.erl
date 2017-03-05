@@ -10,6 +10,7 @@
 -module(week2_lists).
 -include_lib("eunit/include/eunit.hrl").
 -export([double/1, evens/1, median/1, mode/1]).
+-export([evens_new/1]).
 
 
 %% Transforming list elements
@@ -33,6 +34,10 @@ evens([]) ->
     [];
 evens(L) ->
     filter(fun(X) -> X rem 2 =:= 0 end, L).
+
+%% evens without filter
+evens_new(L) ->
+    [X || X <- L, X rem 2 =:= 0].
 
 %% helper function definition
 -spec filter(Predicate, ListX) -> ListY when
