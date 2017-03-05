@@ -2,11 +2,14 @@
 
 #### Worked exercises and assinments from the course
 
-> Running using the makefile
+> Running using the makefile.
 ```bash
 # run all specify make without options
-make 
+make
+```
 
+> Run only the EUnit test cases.
+```bash
 # run tests
 make test
 ```
