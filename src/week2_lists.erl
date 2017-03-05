@@ -10,7 +10,7 @@
 -module(week2_lists).
 -include_lib("eunit/include/eunit.hrl").
 -export([double/1, evens/1, median/1, mode/1]).
--export([get_count/2]).
+
 
 %% Transforming list elements
 %% Define an Erlang function double/1 to double the elements of a list of numbers.
@@ -24,6 +24,7 @@ double([X|Xs]) ->
 
 %% Filtering lists
 %% Define a function evens/1 that extracts the even numbers from a list of integers.
+%% we will use a helper function filter for filtering out all the even numbers
 -spec evens(ListX) -> ListY when
       ListX :: [T],
       ListY :: [T],
@@ -33,6 +34,7 @@ evens([]) ->
 evens(L) ->
     filter(fun(X) -> X rem 2 =:= 0 end, L).
 
+%% helper function definition
 -spec filter(Predicate, ListX) -> ListY when
       Predicate :: fun((Elem :: T) -> boolean()),
       ListX :: [T],
@@ -78,20 +80,30 @@ avg(A, B) ->
 mode([]) ->
     void;
 mode(L) ->
+    % We will sort the list and take only the unique elements first
     Sort = lists:sort(L),
+    % used functions from sets module to get unique elements
     U = sets:to_list(sets:from_list(L)),
+    % get a key-value pair of list of elements, with the
+    % key being count of how many times element appears
+    % and value being the element itself
     KV = [get_count(X, Sort) || X <- U],
-    Fkv = lists:filter(fun({K, _}) -> K > 1 end, KV),
+    % filter the key-val pairs for all keys exceeding 1
+    % in other words, we are picking all element appearing more that once
+    Fkv = filter(fun({K, _}) -> K > 1 end, KV),
+    % check if the filtered list has any repeated elements from list
     case Fkv =:= [] of
         true ->
             void;
         false ->
             MaxKey = lists:max(proplists:get_keys(Fkv)),
-            ResList = lists:filter(fun({Y, _}) -> Y =:= MaxKey end, Fkv),
+            ResList = filter(fun({Y, _}) -> Y =:= MaxKey end, Fkv),
             {_, Res} = lists:unzip(ResList),
             Res
     end.
 
+%% helper function for getting the count of number of occurrences
+%% of an element in a list
 get_count(X, []) ->
     {0, X};
 get_count(X, [H|T]) ->
@@ -106,7 +118,7 @@ count({Acc, H}, []) ->
 
 
 %%-----------------------------------------------------------------------------
-%% eunit test cases
+%% eunit test cases for the above functions
 %%-----------------------------------------------------------------------------
 double_test_() ->
     [?_assertEqual([2,4,6,10,12], double([1,2,3,5,6])),
