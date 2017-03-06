@@ -11,6 +11,9 @@
 -include_lib("eunit/include/eunit.hrl").
 -export([double/1, evens/1, median/1, mode/1]).
 -export([evens_new/1]).
+%% additional work..
+-export([take/2, nub/1]).
+-export([nubs/1]).
 
 
 %% Transforming list elements
@@ -121,6 +124,56 @@ count({Acc, H}, [_|T]) ->
 count({Acc, H}, []) ->
     {Acc, H}.
 
+%%-----------------------------------------------------------------------------
+%% Define a function take that takes the first N elements from a list
+-spec take(N, ListX) -> ListY when
+      N :: pos_integer(),
+      ListX :: [T],
+      ListY :: [T],
+      T :: term().
+take(0, _) ->
+    [];
+take(_, []) ->
+    [];
+take(N, L) ->
+    lists:reverse(take(N, L, [])).
+
+take(0, _, Acc) ->
+    Acc;
+take(_, [], Acc) ->
+    Acc;
+take(N, [X|Xs], Acc) ->
+    take(N-1, Xs, [X|Acc]).
+
+
+%% The 'nub' function
+%% Define a  function nub  to remove  all the  duplicate elements  from a
+%% list.  This  could  remove  all repeated  elements  except  the  first
+%% instance, or all repeated elements except the final instance.
+-spec nub(ListX) -> ListY when
+      ListX :: [T],
+      ListY :: [T],
+      T :: term().
+nub([]) ->
+    [];
+nub([X | Xs]) ->
+    [X | nub(nub(X, Xs))].
+
+nub(_, []) ->
+    [];
+nub(X, [Y | Ys]) ->
+    case X =:= Y of
+        true ->
+            nub(X, Ys);
+        false ->
+            [Y | nub(X, Ys)]
+    end.
+
+%% another take at nub using sets module
+nubs([]) ->
+    [];
+nubs(L) ->
+    sets:to_list(sets:from_list(L)).
 
 %%-----------------------------------------------------------------------------
 %% eunit test cases for the above functions
@@ -150,6 +203,20 @@ mode_test_() ->
      ?_assertEqual([3,2,1], mode([1,2,3,3,2,1])),
      ?_assert(mode(lists:seq(1,10)) =:= void),
      ?_assertException(error, function_clause, mode(123))
+    ].
+
+take_test_() ->
+    [?_assertEqual([], take(0,"hello")),
+     ?_assertEqual("hell", take(4,"hello")),
+     ?_assertEqual("hello", take(5,"hello")),
+     ?_assertEqual("hello", take(9,"hello")),
+     ?_assertException(error, function_clause, take(1, 2))
+    ].
+
+nub_test_() ->
+    [?_assertEqual([2,4,1,3], nub([2,4,1,3,3,1])),
+     ?_assertEqual([2,4,3,1], nub([2,4,3,3,1,1])),
+     ?_assertException(error, function_clause, nub(1))
     ].
 
 %% ======================== EUnit ========================
