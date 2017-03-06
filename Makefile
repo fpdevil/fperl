@@ -3,7 +3,7 @@ ERLC_FLAGS=
 
 SOURCES=$(wildcard src/*.erl)
 
-HEADERS=$(wildcard src/*.hrl)
+HEADERS=$(wildcard include/*.hrl)
 
 OBJECTS=$(SOURCES:src/%.erl=ebin/%.beam)
 
