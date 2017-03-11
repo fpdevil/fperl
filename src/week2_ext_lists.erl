@@ -8,7 +8,7 @@
 %%%-----------------------------------------------------------------------------
 -module(week2_ext_lists).
 -include_lib("eunit/include/eunit.hrl").
--export([join/2, concat/1]).
+-export([join/2, concat/1, member/2]).
 -export([insertsort/1, quicksort/1, mergesort/1, selectsort/1]).
 -export([perms/1]).
 
@@ -26,6 +26,18 @@ concat([X]) ->
     X;
 concat([X|Xs]) ->
     join(X, concat(Xs)).
+
+%% Testing membership
+member(_, []) ->
+    false;
+member(X, [Y | Ys]) ->
+    case X =:= Y of
+        true ->
+            true;
+        false ->
+            false or member(X, Ys)
+    end.
+
 
 %% sorting of the lists
 %% quick sort
@@ -150,6 +162,13 @@ concat_test_() ->
      ?_assertException(error, function_clause, concat(123))
     ].
 
+member_test_() ->
+    [?_assertEqual(true, member(3, [1,2,3,4,5])),
+     ?_assertEqual(true, member(2,[2,0,0,1])),
+     ?_assertEqual(false, member(20,[2,0,0,1])),
+     ?_assertException(error, function_clause, member(1, 2))
+    ].
+
 quicksort_test_() ->
     [?_assertEqual([1,2,2,3,3,4,4,5,6,7,8,9,10], quicksort([10, 2, 5, 3, 1, 6, 7, 4, 2, 3, 4, 8, 9])),
      ?_assertEqual("        abcdeeefghhijklmnoooopqrrsttuuvwxyz", quicksort("the quick brown fox jumps over the lazy dog")),
@@ -182,47 +201,38 @@ perms_test_() ->
      ?_assertException(error, function_clause, perms(100))
 ].
 
-%% (distel@localhost)44> eunit:test(week2_ext_lists, [verbose]).
-%% ======================== EUnit ========================
-%% module 'week2_ext_lists'
-%%   week2_ext_lists:178: perms_test_...ok
-%%   week2_ext_lists:179: perms_test_...ok
-%%   week2_ext_lists:180: perms_test_...ok
-%%   week2_ext_lists:181: perms_test_...ok
-%%   week2_ext_lists:182: perms_test_...ok
-%%   week2_ext_lists:154: quicksort_test_...ok
-%%   week2_ext_lists:155: quicksort_test_...ok
-%%   week2_ext_lists:156: quicksort_test_...ok
-%%   week2_ext_lists:160: insertsort_test_...ok
-%%   week2_ext_lists:161: insertsort_test_...ok
-%%   week2_ext_lists:162: insertsort_test_...ok
-%%   week2_ext_lists:166: mergesort_test_...ok
-%%   week2_ext_lists:167: mergesort_test_...ok
-%%   week2_ext_lists:168: mergesort_test_...ok
-%%   week2_ext_lists:172: selectsort_test_...ok
-%%   week2_ext_lists:173: selectsort_test_...ok
-%%   week2_ext_lists:174: selectsort_test_...ok
-%%   week2_ext_lists:142: join_test_...ok
-%%   week2_ext_lists:143: join_test_...ok
-%%   week2_ext_lists:144: join_test_...ok
-%%   week2_ext_lists:148: concat_test_...ok
-%%   week2_ext_lists:149: concat_test_...ok
-%%   week2_ext_lists:150: concat_test_...ok
-%%   [done in 0.069 s]
-%% =======================================================
-%%   All 23 tests passed.
-%% ok
 
-%% (distel@localhost)28> eunit:test(week2_ext_lists, [verbose]).
+%% (distel@localhost)54> eunit:test(week2_ext_lists,[verbose]).
 %% ======================== EUnit ========================
 %% module 'week2_ext_lists'
-%%   week2_ext_lists:144: quicksort_test_...ok
-%%   week2_ext_lists:145: quicksort_test_...ok
-%%   week2_ext_lists:146: quicksort_test_...ok
-%%   week2_ext_lists:150: insertsort_test_...ok
-%%   week2_ext_lists:151: insertsort_test_...ok
-%%   week2_ext_lists:152: insertsort_test_...ok
-%%   week2_ext_lists:156: mergesort_test_...ok
-%%   week2_ext_lists:157: mergesort_test_...ok
-%%   week2_ext_lists:158: mergesort_test_...ok
-%%   week2_ext_lists:162: selectsort_test_...ok
+%%   week2_ext_lists:166: member_test_...ok
+%%   week2_ext_lists:167: member_test_...ok
+%%   week2_ext_lists:168: member_test_...ok
+%%   week2_ext_lists:169: member_test_...ok
+%%   week2_ext_lists:197: perms_test_...ok
+%%   week2_ext_lists:198: perms_test_...ok
+%%   week2_ext_lists:199: perms_test_...ok
+%%   week2_ext_lists:200: perms_test_...ok
+%%   week2_ext_lists:201: perms_test_...ok
+%%   week2_ext_lists:173: quicksort_test_...ok
+%%   week2_ext_lists:174: quicksort_test_...ok
+%%   week2_ext_lists:175: quicksort_test_...ok
+%%   week2_ext_lists:179: insertsort_test_...ok
+%%   week2_ext_lists:180: insertsort_test_...ok
+%%   week2_ext_lists:181: insertsort_test_...ok
+%%   week2_ext_lists:185: mergesort_test_...ok
+%%   week2_ext_lists:186: mergesort_test_...ok
+%%   week2_ext_lists:187: mergesort_test_...ok
+%%   week2_ext_lists:191: selectsort_test_...ok
+%%   week2_ext_lists:192: selectsort_test_...ok
+%%   week2_ext_lists:193: selectsort_test_...ok
+%%   week2_ext_lists:154: join_test_...ok
+%%   week2_ext_lists:155: join_test_...ok
+%%   week2_ext_lists:156: join_test_...ok
+%%   week2_ext_lists:160: concat_test_...ok
+%%   week2_ext_lists:161: concat_test_...ok
+%%   week2_ext_lists:162: concat_test_...ok
+%%   [done in 0.081 s]
+%% =======================================================
+%%   All 27 tests passed.
+%% ok
