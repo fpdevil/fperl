@@ -14,6 +14,7 @@
 %% additional work..
 -export([take/2, nub/1]).
 -export([nubs/1]).
+-export([palindrome/1]).
 
 
 %% Transforming list elements
@@ -175,6 +176,29 @@ nubs([]) ->
 nubs(L) ->
     sets:to_list(sets:from_list(L)).
 
+%% palindrome of string or sentence
+%% for the string or the sentence, we will first strip all the below characters
+%% "\t !\"',.:;?[\\]^_`" which is the ascii list [9,32,33,34,39,44,46,58,59,63,91,92,93,94,95,96]
+palindrome([]) ->
+    true;
+palindrome([_]) ->
+    true;
+palindrome(X) ->
+    %% filtering out the unneeded characters from string
+    C = lists:filter(fun(Str) -> not(lists:member(Str,[9,32,33,34,39,44,46,58,59,63,91,92,93,94,95,96])) end, X),
+    %% convert the filtered string to all lower case
+    palindrome_str(string:to_lower(C)).
+
+%% helper function which does the actual palindrome check
+palindrome_str([X|Xs]) ->
+    Rest = trimmed(Xs),
+    (X =:= hd(lists:reverse(Xs))) and palindrome(Rest).
+
+%% helper function for getting the string between first and last values
+trimmed(Xs) ->
+    lists:reverse(tl(lists:reverse(Xs))).
+
+
 %%-----------------------------------------------------------------------------
 %% eunit test cases for the above functions
 %%-----------------------------------------------------------------------------
@@ -219,23 +243,47 @@ nub_test_() ->
      ?_assertException(error, function_clause, nub(1))
     ].
 
+palindrome_test_() ->
+    [?_assertEqual(true, palindrome("Madam I\'m Adam")),
+     ?_assertEqual(true, palindrome("A man, a plan, a canal, Panama!")),
+     ?_assertEqual(true, palindrome("abc 1 cba")),
+     ?_assertEqual(true, palindrome("Salisbury moor, sir, is roomy. Rub Silas.")),
+     ?_assertEqual(true, palindrome("No, it is opposed; Art sees Trade's opposition.")),
+     ?_assertException(error, function_clause, palindrome(123))
+    ].
+
+%% 1> eunit:test(week2_lists,[verbose]).
 %% ======================== EUnit ========================
 %% module 'week2_lists'
-%%   week2_lists:131: mode_test_...ok
-%%   week2_lists:132: mode_test_...ok
-%%   week2_lists:133: mode_test_...ok
-%%   week2_lists:134: mode_test_...ok
-%%   week2_lists:112: double_test_...ok
-%%   week2_lists:113: double_test_...ok
-%%   week2_lists:114: double_test_...ok
-%%   week2_lists:118: evens_test_...ok
-%%   week2_lists:119: evens_test_...ok
-%%   week2_lists:120: evens_test_...ok
-%%   week2_lists:124: median_test_...ok
-%%   week2_lists:125: median_test_...ok
-%%   week2_lists:126: median_test_...ok
-%%   week2_lists:127: median_test_...ok
-%%   [done in 0.042 s]
+%%   week2_lists:206: double_test_...ok
+%%   week2_lists:207: double_test_...ok
+%%   week2_lists:208: double_test_...ok
+%%   week2_lists:212: evens_test_...ok
+%%   week2_lists:213: evens_test_...ok
+%%   week2_lists:214: evens_test_...ok
+%%   week2_lists:218: median_test_...ok
+%%   week2_lists:219: median_test_...ok
+%%   week2_lists:220: median_test_...ok
+%%   week2_lists:221: median_test_...ok
+%%   week2_lists:225: mode_test_...ok
+%%   week2_lists:226: mode_test_...ok
+%%   week2_lists:227: mode_test_...ok
+%%   week2_lists:228: mode_test_...ok
+%%   week2_lists:229: mode_test_...ok
+%%   week2_lists:233: take_test_...ok
+%%   week2_lists:234: take_test_...ok
+%%   week2_lists:235: take_test_...ok
+%%   week2_lists:236: take_test_...ok
+%%   week2_lists:237: take_test_...ok
+%%   week2_lists:241: nub_test_...ok
+%%   week2_lists:242: nub_test_...ok
+%%   week2_lists:243: nub_test_...ok
+%%   week2_lists:247: palindrome_test_...ok
+%%   week2_lists:248: palindrome_test_...ok
+%%   week2_lists:249: palindrome_test_...ok
+%%   week2_lists:250: palindrome_test_...ok
+%%   week2_lists:251: palindrome_test_...ok
+%%   [done in 0.084 s]
 %% =======================================================
-%%   All 14 tests passed.
+%%   All 28 tests passed.
 %% ok
