@@ -119,8 +119,17 @@ get_all_words({Num, Line}) ->
         [[]] ->
             [];
         WordList ->
-            get_word_index(Num, rem_dups(WordList), [])
+            rem_dups(get_word_index(Num, WordList, []))
     end.
+
+%% == EUnit test for get_all_words/1
+get_all_words_test_() ->
+    [?_assertEqual([{"fox",13},{"brown",13},{"quick",13},{"the",13}],
+                   get_all_words({13,"The quick brown fox is a Fox "})),
+     ?_assertEqual([{"set",13},{"line",13},{"the",13},{"dots",13},{"sets",13}],
+                   get_all_words({13,"The sets of dots is the line set "})),
+     ?_assertException(error, function_clause, get_all_words("Random"))
+    ].
 
 %
 % helper function which is not exported
@@ -139,6 +148,7 @@ get_word_index(Num, [Word | Words], Acc) ->
         false ->
             get_word_index(Num, Words, Acc)
     end.
+
 
 %
 % helper function for removing the duplicates from a list
