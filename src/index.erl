@@ -149,6 +149,13 @@ get_word_index(Num, [Word | Words], Acc) ->
             get_word_index(Num, Words, Acc)
     end.
 
+get_word_index_test() ->
+    [?_assertEqual([{"fox",0},{"fox",0},{"brown",0},{"quick",0},{"the",0}],
+                  get_word_index(0,["The","quick","brown","fox","is","a","Fox"],[])),
+     ?_assertEqual([{"fox",[]},{"fox",[]},{"brown",[]},{"quick",[]},{"the",[]}],
+                  get_word_index([],["The","quick","brown","fox","is","a","Fox"],[])),
+     ?_assertException(error, bad_argument, get_word_index([],"abcd",[]))
+    ].
 
 %
 % helper function for removing the duplicates from a list
@@ -167,6 +174,15 @@ rem_dups(X, [Y | Ys]) ->
         false ->
             [Y | rem_dups(X, Ys)]
     end.
+
+%% == EUnit tests for rem_dups/1
+rem_dups_test() ->
+    [?_assertEqual([{"fox",13},{"brown",13},{"quick",13},{"the",13}],
+                  rem_dups([{"fox",13},{"fox",13},{"brown",13},{"quick",13},{"the",13}])),
+     ?_assertEqual("ABRCD", rem_dups("ABRACADABRA")),
+     ?_assertEqual([], rem_dups([])),
+     ?_assertException(error, function_clause, rem_dups(100))
+    ].
 
 %
 % helper function for Word, Line tuple creation.
@@ -212,6 +228,14 @@ consolidate_values([{K, V1}, {K, V2} | KV]) ->
             [{V1, V1} | consolidate_values([{K, V2} | KV])]
     end.
 
+%% == EUit tests for consolidate_values/1
+consolidate_values_test() ->
+    [?_assertEqual([{7,7},{13,13},{14,14},{18,18}],
+                  consolidate_values([{"can",7},{"can",13},{"can",14},{"can",18}])),
+     ?_assertEqual([], consolidate_values([])),
+     ?_assertException(error, function_clause, consolidate_values([{"abc",1},{"abc",2},{"def",3}]))
+    ].
+
 %
 % this helper function is used for further processing the
 % values list from the above function, as the above function
@@ -233,6 +257,15 @@ get_value_pairs([{Va1, Va2}, {Vb1, Vb2} | V]) ->
         false ->
             [{Va1, Va2} | get_value_pairs([{Vb1, Vb2} | V])]
     end.
+
+%% == EUnit tests for get_value_pairs/1
+get_value_pairs_test() ->
+    [?_assertEqual([{}], get_value_pairs([])),
+     ?_assertEqual([{1,3}], get_value_pairs([{1,1},{2,2},{3,3}])),
+     ?_assertEqual([{1,1},{4,7}], get_value_pairs([{1,1},{4,5},{6,7}])),
+     ?_assertEqual([{100,115},{200,210}], get_value_pairs([{100,110},{111, 115},{200,210}])),
+     ?_assertException(error, function_clause, get_value_pairs([1,2,3]))
+    ].
 
 %%%-----------------------------------------------------------------------------
 % This is out main function for processing the File and
